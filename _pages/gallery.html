@@ -6,8 +6,7 @@ author_profile: false
 ---
 
 <div class="gallery-intro">
-  <p>This is a running visual diary of places, moments, and details that caught my eye.</p>
-  <p>Every image here comes directly from my own photo archive and updates automatically when new files are added to <code>_gallery_images</code>.</p>
+  <p>These are some photos I've clicked over the last 5 years or so, most with a budget phone camera. I feel like, while being caught up in life, we ignore the conspicuous beauty of the commonplace. I guess this collection of images is an attempt to be more intentional and recognise this beauty in plain sight.</p>
 </div>
 
 {% assign gallery_files = site.static_files | where_exp: "file", "file.path contains '/_gallery_images/'" | sort: "name" %}
