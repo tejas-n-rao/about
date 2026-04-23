@@ -1,0 +1,103 @@
+---
+layout: single
+title: "Gallery"
+permalink: /gallery/
+author_profile: false
+---
+
+<div class="gallery-intro">
+  <p>This is a running visual diary of places, moments, and details that caught my eye.</p>
+  <p>Every image here comes directly from my own photo archive and updates automatically when new files are added to <code>_gallery_images</code>.</p>
+</div>
+
+{% assign gallery_files = site.static_files | where_exp: "file", "file.path contains '/_gallery_images/'" | sort: "name" %}
+
+{% if gallery_files.size > 0 %}
+  <div class="gallery-masonry" id="photo-wall" oncontextmenu="return false;">
+    {% for image in gallery_files %}
+      <figure class="gallery-card">
+        <img
+          src="{{ image.path | relative_url }}"
+          alt="{{ image.basename | replace: '-', ' ' | replace: '_', ' ' | escape }}"
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+          referrerpolicy="no-referrer"
+        >
+      </figure>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>No images were found in <code>_gallery_images</code>. Add photos there and rebuild the site.</p>
+{% endif %}
+
+<style>
+  .gallery-intro {
+    max-width: 56rem;
+    margin: 0 0 2rem;
+    line-height: 1.7;
+    color: #2c3744;
+  }
+
+  .gallery-intro p {
+    margin: 0 0 0.85rem;
+  }
+
+  .gallery-masonry {
+    column-count: 1;
+    column-gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .gallery-masonry {
+      column-count: 2;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .gallery-masonry {
+      column-count: 3;
+    }
+  }
+
+  .gallery-card {
+    margin: 0 0 1rem;
+    border-radius: 14px;
+    overflow: hidden;
+    break-inside: avoid;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
+    background: #111;
+  }
+
+  .gallery-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  (function () {
+    const wall = document.getElementById("photo-wall");
+    if (!wall) return;
+
+    const block = function (event) {
+      event.preventDefault();
+    };
+
+    wall.addEventListener("contextmenu", block);
+    wall.addEventListener("dragstart", block);
+    wall.addEventListener("copy", block);
+
+    document.addEventListener("keydown", function (event) {
+      if (!(event.ctrlKey || event.metaKey)) return;
+      const key = event.key.toLowerCase();
+      if (key === "s" || key === "p" || key === "u") {
+        event.preventDefault();
+      }
+    });
+  })();
+</script>
