@@ -161,6 +161,7 @@ analytics:
 include:
   - .htaccess
   - _pages
+  - _gallery_images
   - files
 exclude:
   - "*.sublime-project"
