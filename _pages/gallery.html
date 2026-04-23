@@ -34,6 +34,10 @@ author_profile: false
 {% if ordered_gallery_files.size > 0 %}
   <div class="gallery-masonry" id="photo-wall" oncontextmenu="return false;"></div>
   <div id="gallery-sentinel" aria-hidden="true"></div>
+  <div class="gallery-loader" id="gallery-loader" aria-hidden="true" aria-live="polite">
+    <span class="gallery-loader__spinner" aria-hidden="true"></span>
+    <span class="gallery-loader__label">Loading more photos...</span>
+  </div>
 
   <div class="gallery-lightbox" id="gallery-lightbox" aria-hidden="true" role="dialog" aria-label="Image viewer">
     <button class="gallery-lightbox__close" id="gallery-lightbox-close" type="button" aria-label="Close image viewer">&times;</button>
@@ -98,6 +102,39 @@ author_profile: false
   #gallery-sentinel {
     width: 100%;
     height: 1px;
+  }
+
+  .gallery-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 1.2rem 0 0.4rem;
+    color: var(--global-text-color);
+    font-size: 0.95rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+  }
+
+  .gallery-loader.is-visible {
+    opacity: 0.9;
+    visibility: visible;
+  }
+
+  .gallery-loader__spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(140, 140, 140, 0.35);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: gallery-spin 0.85s linear infinite;
+  }
+
+  @keyframes gallery-spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   .gallery-lightbox {
@@ -216,6 +253,7 @@ author_profile: false
     if (!wall) return;
 
     const sentinel = document.getElementById("gallery-sentinel");
+    const loader = document.getElementById("gallery-loader");
     const lightbox = document.getElementById("gallery-lightbox");
     const lightboxImage = document.getElementById("gallery-lightbox-image");
     const lightboxMeta = document.getElementById("gallery-lightbox-meta");
@@ -275,6 +313,12 @@ author_profile: false
       if (nextIndex >= galleryItems.length) return;
       if (!shouldLoadMoreSoon()) return;
       loadNextBatch(SCROLL_BATCH);
+    }
+
+    function setLoaderVisible(visible) {
+      if (!loader) return;
+      loader.classList.toggle("is-visible", visible);
+      loader.setAttribute("aria-hidden", visible ? "false" : "true");
     }
 
     function shortestColumnIndex() {
@@ -417,24 +461,30 @@ author_profile: false
     async function loadNextBatch(batchSize) {
       if (isLoading || nextIndex >= galleryItems.length) return;
       isLoading = true;
+      const showBatchLoader = nextIndex > 0;
+      if (showBatchLoader) setLoaderVisible(true);
 
-      const endIndex = Math.min(nextIndex + batchSize, galleryItems.length);
-      const chunk = galleryItems.slice(nextIndex, endIndex);
-      const probed = await Promise.all(chunk.map(probeImage));
+      try {
+        const endIndex = Math.min(nextIndex + batchSize, galleryItems.length);
+        const chunk = galleryItems.slice(nextIndex, endIndex);
+        const probed = await Promise.all(chunk.map(probeImage));
 
-      for (const result of probed) {
-        if (result) addCard(result);
-      }
+        for (const result of probed) {
+          if (result) addCard(result);
+        }
 
-      nextIndex = endIndex;
-      isLoading = false;
+        nextIndex = endIndex;
 
-      if (nextIndex >= galleryItems.length && observer) {
-        observer.disconnect();
-      }
+        if (nextIndex >= galleryItems.length && observer) {
+          observer.disconnect();
+        }
 
-      if (nextIndex < galleryItems.length) {
-        requestAnimationFrame(maybeLoadMore);
+        if (nextIndex < galleryItems.length) {
+          requestAnimationFrame(maybeLoadMore);
+        }
+      } finally {
+        isLoading = false;
+        if (showBatchLoader) setLoaderVisible(false);
       }
     }
 
