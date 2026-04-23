@@ -237,6 +237,7 @@ author_profile: false
     const GUTTER = 16;
     const INITIAL_BATCH = 10;
     const SCROLL_BATCH = 10;
+    const PRELOAD_DISTANCE = 2200;
 
     let nextIndex = 0;
     let isLoading = false;
@@ -253,15 +254,27 @@ author_profile: false
 
     function setupColumns() {
       const wallWidth = wall.clientWidth;
-      if (wallWidth >= 1080) {
+      if (wallWidth >= 900) {
         columns = 3;
-      } else if (wallWidth >= 700) {
+      } else if (wallWidth >= 620) {
         columns = 2;
       } else {
         columns = 1;
       }
       columnWidth = Math.floor((wallWidth - (columns - 1) * GUTTER) / columns);
       columnHeights = new Array(columns).fill(0);
+    }
+
+    function shouldLoadMoreSoon() {
+      if (!sentinel) return false;
+      const sentinelTop = sentinel.getBoundingClientRect().top;
+      return sentinelTop - window.innerHeight <= PRELOAD_DISTANCE;
+    }
+
+    function maybeLoadMore() {
+      if (nextIndex >= galleryItems.length) return;
+      if (!shouldLoadMoreSoon()) return;
+      loadNextBatch(SCROLL_BATCH);
     }
 
     function shortestColumnIndex() {
@@ -419,6 +432,10 @@ author_profile: false
       if (nextIndex >= galleryItems.length && observer) {
         observer.disconnect();
       }
+
+      if (nextIndex < galleryItems.length) {
+        requestAnimationFrame(maybeLoadMore);
+      }
     }
 
     function setLightboxControls(index) {
@@ -492,24 +509,22 @@ author_profile: false
         function (entries) {
           for (const entry of entries) {
             if (entry.isIntersecting) {
-              loadNextBatch(SCROLL_BATCH);
+              maybeLoadMore();
             }
           }
         },
-        { rootMargin: "2200px 0px" }
+        { rootMargin: PRELOAD_DISTANCE + "px 0px" }
       );
       observer.observe(sentinel);
-    } else {
-      window.addEventListener(
-        "scroll",
-        function () {
-          if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 2200) {
-            loadNextBatch(SCROLL_BATCH);
-          }
-        },
-        { passive: true }
-      );
     }
+
+    window.addEventListener(
+      "scroll",
+      function () {
+        maybeLoadMore();
+      },
+      { passive: true }
+    );
 
     wall.addEventListener("click", function (event) {
       const card = getCardFromEvent(event);
@@ -555,7 +570,10 @@ author_profile: false
 
     window.addEventListener("resize", function () {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(relayout, 150);
+      resizeTimer = setTimeout(function () {
+        relayout();
+        maybeLoadMore();
+      }, 150);
     });
 
     const block = function (event) {
