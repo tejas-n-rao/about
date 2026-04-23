@@ -5,13 +5,6 @@ author_profile: true
 redirect_from: 
   - /about/
   - /about.html
-gallery:
-  - image_path: 500x300.png
-    alt: "Gallery placeholder 1"
-  - image_path: 500x300.png
-    alt: "Gallery placeholder 2"
-  - image_path: 500x300.png
-    alt: "Gallery placeholder 3"
 ---
 
 I'm a 3rd Year Undergraduate Student studying Data Science & Biological Science.
@@ -27,11 +20,6 @@ Have built this interest by pursuing research across Industry and Academia in do
 - Research Collaborator at Proteomics Research Platform, Charpentier Lab (MPUSP): Evaluating Mass Spectrometry methods for O-Glycoproteomics
 - Bioinformatics Intern, Karkinos Healthcare: Developing interpretable deep learning methods for cancer prediction
 - Research Trainee and Intern, IIT-Delhi: Conducted Literature review on Quantum ML methods for small-molecule drug discovery
-
-### Gallery
-A small collection of images from projects, talks, or lab life. Update the entries in the `gallery` list above to add or change images.
-
-{% include gallery %}
 
 <!--
 ### Musings & Thoughts
