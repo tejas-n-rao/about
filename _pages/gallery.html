@@ -292,9 +292,10 @@ author_profile: false
 
     function setupColumns() {
       const wallWidth = wall.clientWidth;
-      if (wallWidth >= 900) {
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth || wallWidth;
+      if (viewportWidth >= 820) {
         columns = 3;
-      } else if (wallWidth >= 620) {
+      } else if (viewportWidth >= 520) {
         columns = 2;
       } else {
         columns = 1;
