@@ -11,8 +11,27 @@ author_profile: false
 </div>
 
 {% assign gallery_files = site.static_files | where_exp: "file", "file.path contains '/_gallery_images/'" | sort: "name" %}
+{% assign ordered_gallery_files = "" | split: "" %}
+{% assign ordered_gallery_names = "" | split: "" %}
 
-{% if gallery_files.size > 0 %}
+{% if site.data.gallery_order and site.data.gallery_order.files %}
+  {% for filename in site.data.gallery_order.files %}
+    {% assign matched = gallery_files | where: "name", filename | first %}
+    {% if matched %}
+      {% assign ordered_gallery_files = ordered_gallery_files | push: matched %}
+      {% assign ordered_gallery_names = ordered_gallery_names | push: matched.name %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% for file in gallery_files %}
+  {% unless ordered_gallery_names contains file.name %}
+    {% assign ordered_gallery_files = ordered_gallery_files | push: file %}
+    {% assign ordered_gallery_names = ordered_gallery_names | push: file.name %}
+  {% endunless %}
+{% endfor %}
+
+{% if ordered_gallery_files.size > 0 %}
   <div class="gallery-masonry" id="photo-wall" oncontextmenu="return false;"></div>
   <div id="gallery-sentinel" aria-hidden="true"></div>
 
@@ -205,7 +224,7 @@ author_profile: false
     const lightboxClose = document.getElementById("gallery-lightbox-close");
 
     const galleryItems = [
-      {% for image in gallery_files %}
+      {% for image in ordered_gallery_files %}
       {
         index: {{ forloop.index0 }},
         src: "../_gallery_images/{{ image.name | uri_escape }}",
@@ -216,9 +235,8 @@ author_profile: false
     ];
 
     const GUTTER = 16;
-    const MIN_COLUMN_WIDTH = 320;
-    const INITIAL_BATCH = 18;
-    const SCROLL_BATCH = 12;
+    const INITIAL_BATCH = 10;
+    const SCROLL_BATCH = 10;
 
     let nextIndex = 0;
     let isLoading = false;
@@ -235,7 +253,13 @@ author_profile: false
 
     function setupColumns() {
       const wallWidth = wall.clientWidth;
-      columns = Math.max(1, Math.floor((wallWidth + GUTTER) / (MIN_COLUMN_WIDTH + GUTTER)));
+      if (wallWidth >= 1080) {
+        columns = 3;
+      } else if (wallWidth >= 700) {
+        columns = 2;
+      } else {
+        columns = 1;
+      }
       columnWidth = Math.floor((wallWidth - (columns - 1) * GUTTER) / columns);
       columnHeights = new Array(columns).fill(0);
     }
@@ -472,14 +496,14 @@ author_profile: false
             }
           }
         },
-        { rootMargin: "1200px 0px" }
+        { rootMargin: "2200px 0px" }
       );
       observer.observe(sentinel);
     } else {
       window.addEventListener(
         "scroll",
         function () {
-          if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1200) {
+          if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 2200) {
             loadNextBatch(SCROLL_BATCH);
           }
         },
