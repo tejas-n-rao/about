@@ -17,12 +17,13 @@ author_profile: false
     {% for image in gallery_files %}
       <figure class="gallery-card">
         <img
-          src="{{ image.path | relative_url }}"
+          src="../_gallery_images/{{ image.name | uri_escape }}"
           alt="{{ image.basename | replace: '-', ' ' | replace: '_', ' ' | escape }}"
           loading="lazy"
           decoding="async"
           draggable="false"
           referrerpolicy="no-referrer"
+          onerror="this.onerror=null; this.src='../gallery_images/{{ image.name | uri_escape }}';"
         >
       </figure>
     {% endfor %}
@@ -36,7 +37,7 @@ author_profile: false
     max-width: 56rem;
     margin: 0 0 2rem;
     line-height: 1.7;
-    color: #2c3744;
+    color: var(--global-text-color);
   }
 
   .gallery-intro p {
