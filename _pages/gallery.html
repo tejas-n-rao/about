@@ -13,20 +13,15 @@ author_profile: false
 {% assign gallery_files = site.static_files | where_exp: "file", "file.path contains '/_gallery_images/'" | sort: "name" %}
 
 {% if gallery_files.size > 0 %}
-  <div class="gallery-masonry" id="photo-wall" oncontextmenu="return false;">
-    {% for image in gallery_files %}
-      <figure class="gallery-card">
-        <img
-          src="../_gallery_images/{{ image.name | uri_escape }}"
-          alt="{{ image.basename | replace: '-', ' ' | replace: '_', ' ' | escape }}"
-          loading="lazy"
-          decoding="async"
-          draggable="false"
-          referrerpolicy="no-referrer"
-          onerror="this.onerror=null; this.src='../gallery_images/{{ image.name | uri_escape }}';"
-        >
-      </figure>
-    {% endfor %}
+  <div class="gallery-masonry" id="photo-wall" oncontextmenu="return false;"></div>
+  <div id="gallery-sentinel" aria-hidden="true"></div>
+
+  <div class="gallery-lightbox" id="gallery-lightbox" aria-hidden="true" role="dialog" aria-label="Image viewer">
+    <button class="gallery-lightbox__close" id="gallery-lightbox-close" type="button" aria-label="Close image viewer">&times;</button>
+    <button class="gallery-lightbox__nav gallery-lightbox__nav--prev" id="gallery-lightbox-prev" type="button" aria-label="Previous image">&#8249;</button>
+    <img class="gallery-lightbox__image" id="gallery-lightbox-image" alt="" draggable="false" referrerpolicy="no-referrer">
+    <button class="gallery-lightbox__nav gallery-lightbox__nav--next" id="gallery-lightbox-next" type="button" aria-label="Next image">&#8250;</button>
+    <p class="gallery-lightbox__meta" id="gallery-lightbox-meta"></p>
   </div>
 {% else %}
   <p>No images were found in <code>_gallery_images</code>. Add photos there and rebuild the site.</p>
@@ -45,38 +40,154 @@ author_profile: false
   }
 
   .gallery-masonry {
-    column-count: 1;
-    column-gap: 1rem;
-  }
-
-  @media (min-width: 768px) {
-    .gallery-masonry {
-      column-count: 2;
-    }
-  }
-
-  @media (min-width: 1100px) {
-    .gallery-masonry {
-      column-count: 3;
-    }
+    position: relative;
+    min-height: 18rem;
   }
 
   .gallery-card {
-    margin: 0 0 1rem;
+    position: absolute;
+    margin: 0;
     border-radius: 14px;
     overflow: hidden;
-    break-inside: avoid;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
     background: #111;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    will-change: top, left;
+    cursor: zoom-in;
+  }
+
+  .gallery-card:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .gallery-card.is-visible {
+    opacity: 1;
   }
 
   .gallery-card img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     user-select: none;
     -webkit-user-drag: none;
     pointer-events: none;
+  }
+
+  #gallery-sentinel {
+    width: 100%;
+    height: 1px;
+  }
+
+  .gallery-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 4.5rem;
+    background: rgba(0, 0, 0, 0.92);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+  }
+
+  .gallery-lightbox.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .gallery-lightbox__image {
+    max-width: 100%;
+    max-height: 85vh;
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55);
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .gallery-lightbox__nav,
+  .gallery-lightbox__close {
+    position: absolute;
+    border: 0;
+    color: #fff;
+    background: rgba(30, 30, 30, 0.6);
+    cursor: pointer;
+  }
+
+  .gallery-lightbox__nav {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .gallery-lightbox__nav:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .gallery-lightbox__nav--prev {
+    left: 1rem;
+  }
+
+  .gallery-lightbox__nav--next {
+    right: 1rem;
+  }
+
+  .gallery-lightbox__close {
+    top: 1rem;
+    right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .gallery-lightbox__meta {
+    position: absolute;
+    left: 50%;
+    bottom: 1rem;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    color: #e9e9e9;
+    background: rgba(22, 22, 22, 0.72);
+    font-size: 0.95rem;
+  }
+
+  body.gallery-lock-scroll {
+    overflow: hidden;
+  }
+
+  @media (max-width: 740px) {
+    .gallery-lightbox {
+      padding: 2rem 1rem 3.75rem;
+    }
+
+    .gallery-lightbox__nav {
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 1.6rem;
+    }
+
+    .gallery-lightbox__close {
+      width: 2.25rem;
+      height: 2.25rem;
+      font-size: 1.7rem;
+    }
   }
 </style>
 
@@ -84,6 +195,344 @@ author_profile: false
   (function () {
     const wall = document.getElementById("photo-wall");
     if (!wall) return;
+
+    const sentinel = document.getElementById("gallery-sentinel");
+    const lightbox = document.getElementById("gallery-lightbox");
+    const lightboxImage = document.getElementById("gallery-lightbox-image");
+    const lightboxMeta = document.getElementById("gallery-lightbox-meta");
+    const lightboxPrev = document.getElementById("gallery-lightbox-prev");
+    const lightboxNext = document.getElementById("gallery-lightbox-next");
+    const lightboxClose = document.getElementById("gallery-lightbox-close");
+
+    const galleryItems = [
+      {% for image in gallery_files %}
+      {
+        index: {{ forloop.index0 }},
+        src: "../_gallery_images/{{ image.name | uri_escape }}",
+        fallback: "../gallery_images/{{ image.name | uri_escape }}",
+        alt: {{ image.basename | replace: '-', ' ' | replace: '_', ' ' | jsonify }}
+      }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ];
+
+    const GUTTER = 16;
+    const MIN_COLUMN_WIDTH = 320;
+    const INITIAL_BATCH = 18;
+    const SCROLL_BATCH = 12;
+
+    let nextIndex = 0;
+    let isLoading = false;
+    let columns = 1;
+    let columnWidth = 0;
+    let columnHeights = [0];
+    let resizeTimer = null;
+    let observer = null;
+    let currentLightboxIndex = -1;
+
+    const cards = [];
+    const sourceCache = Object.create(null);
+    const sourcePromiseCache = Object.create(null);
+
+    function setupColumns() {
+      const wallWidth = wall.clientWidth;
+      columns = Math.max(1, Math.floor((wallWidth + GUTTER) / (MIN_COLUMN_WIDTH + GUTTER)));
+      columnWidth = Math.floor((wallWidth - (columns - 1) * GUTTER) / columns);
+      columnHeights = new Array(columns).fill(0);
+    }
+
+    function shortestColumnIndex() {
+      let target = 0;
+      for (let i = 1; i < columnHeights.length; i += 1) {
+        if (columnHeights[i] < columnHeights[target]) {
+          target = i;
+        }
+      }
+      return target;
+    }
+
+    function positionCard(card) {
+      const col = shortestColumnIndex();
+      const cardHeight = Math.max(120, Math.round(columnWidth / card.ratio));
+      const left = col * (columnWidth + GUTTER);
+      const top = columnHeights[col];
+
+      card.el.style.width = columnWidth + "px";
+      card.el.style.height = cardHeight + "px";
+      card.el.style.left = left + "px";
+      card.el.style.top = top + "px";
+
+      columnHeights[col] = top + cardHeight + GUTTER;
+    }
+
+    function updateWallHeight() {
+      const maxHeight = Math.max.apply(null, columnHeights);
+      wall.style.height = Math.max(0, maxHeight - GUTTER) + "px";
+    }
+
+    function relayout() {
+      setupColumns();
+      for (const card of cards) {
+        positionCard(card);
+      }
+      updateWallHeight();
+    }
+
+    function resolveItemSource(item) {
+      if (!item) return Promise.resolve(null);
+
+      if (sourceCache[item.index]) {
+        return Promise.resolve(sourceCache[item.index]);
+      }
+
+      if (sourcePromiseCache[item.index]) {
+        return sourcePromiseCache[item.index];
+      }
+
+      sourcePromiseCache[item.index] = new Promise(function (resolve) {
+        const primary = new Image();
+        primary.decoding = "async";
+        primary.referrerPolicy = "no-referrer";
+
+        primary.onload = function () {
+          const result = {
+            finalSrc: item.src,
+            width: primary.naturalWidth,
+            height: primary.naturalHeight
+          };
+          sourceCache[item.index] = result;
+          delete sourcePromiseCache[item.index];
+          resolve(result);
+        };
+
+        primary.onerror = function () {
+          const backup = new Image();
+          backup.decoding = "async";
+          backup.referrerPolicy = "no-referrer";
+
+          backup.onload = function () {
+            const result = {
+              finalSrc: item.fallback,
+              width: backup.naturalWidth,
+              height: backup.naturalHeight
+            };
+            sourceCache[item.index] = result;
+            delete sourcePromiseCache[item.index];
+            resolve(result);
+          };
+
+          backup.onerror = function () {
+            delete sourcePromiseCache[item.index];
+            resolve(null);
+          };
+
+          backup.src = item.fallback;
+        };
+
+        primary.src = item.src;
+      });
+
+      return sourcePromiseCache[item.index];
+    }
+
+    function probeImage(item) {
+      return resolveItemSource(item).then(function (data) {
+        if (!data) return null;
+        return {
+          item: item,
+          finalSrc: data.finalSrc,
+          width: data.width,
+          height: data.height
+        };
+      });
+    }
+
+    function addCard(data) {
+      const figure = document.createElement("figure");
+      figure.className = "gallery-card";
+      figure.setAttribute("data-index", String(data.item.index));
+      figure.setAttribute("tabindex", "0");
+      figure.setAttribute("role", "button");
+      figure.setAttribute("aria-label", "Open full image");
+
+      const img = document.createElement("img");
+      img.src = data.finalSrc;
+      img.alt = data.item.alt || "";
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.draggable = false;
+      img.referrerPolicy = "no-referrer";
+
+      figure.appendChild(img);
+      wall.appendChild(figure);
+
+      const ratio = data.width > 0 && data.height > 0 ? data.width / data.height : 1;
+      const card = { el: figure, ratio: ratio };
+      cards.push(card);
+
+      positionCard(card);
+      updateWallHeight();
+
+      requestAnimationFrame(function () {
+        figure.classList.add("is-visible");
+      });
+    }
+
+    async function loadNextBatch(batchSize) {
+      if (isLoading || nextIndex >= galleryItems.length) return;
+      isLoading = true;
+
+      const endIndex = Math.min(nextIndex + batchSize, galleryItems.length);
+      const chunk = galleryItems.slice(nextIndex, endIndex);
+      const probed = await Promise.all(chunk.map(probeImage));
+
+      for (const result of probed) {
+        if (result) addCard(result);
+      }
+
+      nextIndex = endIndex;
+      isLoading = false;
+
+      if (nextIndex >= galleryItems.length && observer) {
+        observer.disconnect();
+      }
+    }
+
+    function setLightboxControls(index) {
+      if (!lightboxPrev || !lightboxNext) return;
+      lightboxPrev.disabled = index <= 0;
+      lightboxNext.disabled = index >= galleryItems.length - 1;
+    }
+
+    function closeLightbox() {
+      if (!lightbox || !lightbox.classList.contains("is-open")) return;
+      lightbox.classList.remove("is-open");
+      lightbox.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("gallery-lock-scroll");
+      currentLightboxIndex = -1;
+    }
+
+    async function showLightboxImage(index) {
+      if (!lightbox || !lightboxImage || !lightboxMeta) return;
+      if (index < 0 || index >= galleryItems.length) return;
+
+      currentLightboxIndex = index;
+      setLightboxControls(index);
+      lightboxMeta.textContent = "Loading...";
+
+      const item = galleryItems[index];
+      const source = await resolveItemSource(item);
+
+      if (!lightbox.classList.contains("is-open") || currentLightboxIndex !== index) {
+        return;
+      }
+
+      if (source) {
+        lightboxImage.src = source.finalSrc;
+        lightboxImage.alt = item.alt || "";
+        lightboxMeta.textContent = String(index + 1) + " / " + String(galleryItems.length);
+      } else {
+        lightboxImage.removeAttribute("src");
+        lightboxImage.alt = "";
+        lightboxMeta.textContent = "Image unavailable";
+      }
+
+      if (index + 1 < galleryItems.length) resolveItemSource(galleryItems[index + 1]);
+      if (index - 1 >= 0) resolveItemSource(galleryItems[index - 1]);
+    }
+
+    function openLightbox(index) {
+      if (!lightbox || !lightboxImage) return;
+      lightbox.classList.add("is-open");
+      lightbox.setAttribute("aria-hidden", "false");
+      document.body.classList.add("gallery-lock-scroll");
+      showLightboxImage(index);
+    }
+
+    function stepLightbox(direction) {
+      if (currentLightboxIndex < 0) return;
+      const next = currentLightboxIndex + direction;
+      if (next < 0 || next >= galleryItems.length) return;
+      showLightboxImage(next);
+    }
+
+    function getCardFromEvent(event) {
+      if (!(event.target instanceof Element)) return null;
+      return event.target.closest(".gallery-card");
+    }
+
+    setupColumns();
+    loadNextBatch(INITIAL_BATCH);
+
+    if ("IntersectionObserver" in window && sentinel) {
+      observer = new IntersectionObserver(
+        function (entries) {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              loadNextBatch(SCROLL_BATCH);
+            }
+          }
+        },
+        { rootMargin: "1200px 0px" }
+      );
+      observer.observe(sentinel);
+    } else {
+      window.addEventListener(
+        "scroll",
+        function () {
+          if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1200) {
+            loadNextBatch(SCROLL_BATCH);
+          }
+        },
+        { passive: true }
+      );
+    }
+
+    wall.addEventListener("click", function (event) {
+      const card = getCardFromEvent(event);
+      if (!card) return;
+      const index = Number(card.getAttribute("data-index"));
+      if (!Number.isFinite(index)) return;
+      openLightbox(index);
+    });
+
+    wall.addEventListener("keydown", function (event) {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const card = getCardFromEvent(event);
+      if (!card) return;
+      event.preventDefault();
+      const index = Number(card.getAttribute("data-index"));
+      if (!Number.isFinite(index)) return;
+      openLightbox(index);
+    });
+
+    if (lightboxClose) {
+      lightboxClose.addEventListener("click", closeLightbox);
+    }
+
+    if (lightboxPrev) {
+      lightboxPrev.addEventListener("click", function () {
+        stepLightbox(-1);
+      });
+    }
+
+    if (lightboxNext) {
+      lightboxNext.addEventListener("click", function () {
+        stepLightbox(1);
+      });
+    }
+
+    if (lightbox) {
+      lightbox.addEventListener("click", function (event) {
+        if (event.target === lightbox) {
+          closeLightbox();
+        }
+      });
+    }
+
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(relayout, 150);
+    });
 
     const block = function (event) {
       event.preventDefault();
@@ -93,7 +542,33 @@ author_profile: false
     wall.addEventListener("dragstart", block);
     wall.addEventListener("copy", block);
 
+    if (lightbox) {
+      lightbox.addEventListener("contextmenu", block);
+      lightbox.addEventListener("dragstart", block);
+      lightbox.addEventListener("copy", block);
+    }
+
     document.addEventListener("keydown", function (event) {
+      if (lightbox && lightbox.classList.contains("is-open")) {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeLightbox();
+          return;
+        }
+
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          stepLightbox(-1);
+          return;
+        }
+
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          stepLightbox(1);
+          return;
+        }
+      }
+
       if (!(event.ctrlKey || event.metaKey)) return;
       const key = event.key.toLowerCase();
       if (key === "s" || key === "p" || key === "u") {
