@@ -17,8 +17,8 @@ main:
   - title: "Resume"
     url: /files/Full_Resume.pdf
 
-  - title: "Gallery"
-    url: /gallery/
+  - title: "Other"
+    url: /other/
 
   # - title: "Teaching"
   #   url: /teaching/   

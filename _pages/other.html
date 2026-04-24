@@ -1,0 +1,58 @@
+---
+layout: single
+title: "Other"
+permalink: /other/
+author_profile: false
+---
+
+<p>Explore sections that are separate from the primary portfolio flow.</p>
+
+<div class="other-grid">
+  <a class="other-card" href="{{ '/other/gallery/' | relative_url }}">
+    <h2>Gallery</h2>
+    <p>A personal collection of photos captured over the years.</p>
+  </a>
+
+  <a class="other-card" href="{{ '/other/assignments/' | relative_url }}">
+    <h2>Best Assignments</h2>
+    <p>Selected coursework artifacts including PDFs, presentations, and videos.</p>
+  </a>
+</div>
+
+<style>
+  .other-grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.2rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .other-card {
+    display: block;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(120, 120, 120, 0.25);
+    border-radius: 12px;
+    text-decoration: none;
+    background: rgba(140, 140, 140, 0.06);
+    color: inherit;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .other-card:hover,
+  .other-card:focus {
+    border-color: rgba(70, 130, 220, 0.6);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    outline: none;
+  }
+
+  .other-card h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.2rem;
+  }
+
+  .other-card p {
+    margin: 0;
+    line-height: 1.5;
+  }
+</style>

@@ -162,6 +162,7 @@ include:
   - .htaccess
   - _pages
   - _gallery_images
+  - _best_assignments
   - files
 exclude:
   - "*.sublime-project"
