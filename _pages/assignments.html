@@ -1,11 +1,11 @@
 ---
 layout: single
-title: "Best Assignments"
+title: "Assignments"
 permalink: /other/assignments/
 author_profile: false
 ---
 
-<p>Selected coursework submissions from my degree. Card context is loaded from <code>_data/best_assignments.json</code> so you can update descriptions without changing this page.</p>
+<p>Selected coursework submissions from my degree. Card title/course metadata is loaded from <code>_data/assignments.json</code>.</p>
 
 {% assign assignment_files = site.static_files | where_exp: "file", "file.path contains '/_best_assignments/'" | sort: "name" %}
 
@@ -16,18 +16,14 @@ author_profile: false
     {% for file in assignment_files %}
       {% assign ext = file.extname | downcase %}
       {% if ext == '.pdf' or ext == '.ppt' or ext == '.pptx' or ext == '.doc' or ext == '.docx' or ext == '.mp4' or ext == '.mov' or ext == '.webm' or ext == '.m4v' %}
-        {% assign file_info = site.data.best_assignments.items[file.name] %}
+        {% assign file_info = site.data.assignments.items[file.name] %}
         {% assign encoded_name = file.name | uri_escape %}
         {% assign file_url = '/_best_assignments/' | append: encoded_name | relative_url %}
         {% assign display_title = file.basename | replace: '_', ' ' | replace: '-', ' ' %}
-        {% assign context_text = "Context not added yet. Update _data/best_assignments.json to describe this assignment." %}
         {% assign course_text = "" %}
         {% if file_info %}
           {% if file_info.title %}
             {% assign display_title = file_info.title %}
-          {% endif %}
-          {% if file_info.context %}
-            {% assign context_text = file_info.context %}
           {% endif %}
           {% if file_info.course %}
             {% assign course_text = file_info.course %}
@@ -37,7 +33,6 @@ author_profile: false
         <article class="assignment-card">
           <h3>{{ display_title }}</h3>
           <p class="assignment-meta">{{ type_label }}{% if course_text != "" %} · {{ course_text }}{% endif %}</p>
-          <p class="assignment-context">{{ context_text }}</p>
           <p class="assignment-actions"><a href="{{ file_url }}" target="_blank" rel="noopener">Open file</a></p>
         </article>
       {% endif %}
@@ -87,11 +82,6 @@ author_profile: false
 
   .assignment-actions {
     margin: 0.2rem 0 0;
-  }
-
-  .assignment-context {
-    margin: 0 0 0.75rem;
-    line-height: 1.5;
   }
 </style>
 

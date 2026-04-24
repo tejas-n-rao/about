@@ -1,0 +1,92 @@
+{
+  "items": {
+    "ADS_HW4.pdf": {
+      "title": "ADS HW4",
+      "course": "Applied Data Science"
+    },
+    "BIOS331_MajorAssignment.pdf": {
+      "title": "BIOS331 Major Assignment",
+      "course": "BIOS331"
+    },
+    "CV_Tut3.pdf": {
+      "title": "Computer Vision Tutorial 3",
+      "course": "Computer Vision"
+    },
+    "ComparingMeans_T-Test_Slides.pdf": {
+      "title": "Comparing Means T-Test Slides",
+      "course": "Statistics"
+    },
+    "EE_creative_project.pdf": {
+      "title": "EE Creative Project",
+      "course": "Environmental Ethics"
+    },
+    "Final_Project_BIOS331.pdf": {
+      "title": "BIOS331 Final Project",
+      "course": "BIOS331"
+    },
+    "Geometry_for_Computer_Vision___Napoleon_s_Theorem.pdf": {
+      "title": "Geometry for Computer Vision: Napoleon's Theorem",
+      "course": "Computer Vision"
+    },
+    "Group1_BuddhistPhilosophy_EndTermPresentations.pdf": {
+      "title": "Buddhist Philosophy End-Term Presentation",
+      "course": "Buddhist Philosophy"
+    },
+    "Peace_LAA(B)_CreativeAssignment_TejasRao_.mp4": {
+      "title": "Peace Creative Assignment",
+      "course": "LAA(B)"
+    },
+    "TejasRaoZhangCalibration.pdf": {
+      "title": "Zhang Calibration Assignment",
+      "course": "Computer Vision"
+    },
+    "TejasRao_ADS_TermPaper.pdf": {
+      "title": "ADS Term Paper",
+      "course": "Applied Data Science"
+    },
+    "TejasRao_Assignment1_MicrobialGenomics.pdf": {
+      "title": "Microbial Genomics Assignment 1",
+      "course": "Microbial Genomics"
+    },
+    "TejasRao_BIOS331_PracticalAssignment2.pdf": {
+      "title": "BIOS331 Practical Assignment 2",
+      "course": "BIOS331"
+    },
+    "TejasRao_BIOS331_PracticalAssignment3.pdf": {
+      "title": "BIOS331 Practical Assignment 3",
+      "course": "BIOS331"
+    },
+    "TejasRao_GeomMyWorld.pdf": {
+      "title": "GeomMyWorld Assignment",
+      "course": "Geometry"
+    },
+    "TejasRao_HW5.pdf": {
+      "title": "Homework 5",
+      "course": "Coursework"
+    },
+    "TejasRao_LAA(B)_EndTermPaper.docx": {
+      "title": "LAA(B) End-Term Paper",
+      "course": "LAA(B)"
+    },
+    "TejasRao_PracticalAssignment1_MicrobialGenomics.pdf": {
+      "title": "Microbial Genomics Practical Assignment 1",
+      "course": "Microbial Genomics"
+    },
+    "Tejas_WOC_A_FD3.pdf": {
+      "title": "WOC Assignment FD3",
+      "course": "WOC"
+    },
+    "Variants of DnaB in Bacillus Subtilis.pdf": {
+      "title": "Variants of DnaB in Bacillus Subtilis",
+      "course": "Microbial Genomics"
+    },
+    "WOK_ Critique 1.pdf": {
+      "title": "WOK Critique 1",
+      "course": "WOK"
+    },
+    "WOK_ Critique 2.pdf": {
+      "title": "WOK Critique 2",
+      "course": "WOK"
+    }
+  }
+}
