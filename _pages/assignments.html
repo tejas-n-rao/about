@@ -29,10 +29,11 @@ author_profile: false
             {% assign course_text = file_info.course %}
           {% endif %}
         {% endif %}
-        {% assign type_label = ext | remove: '.' | upcase %}
         <article class="assignment-card">
           <h3>{{ display_title }}</h3>
-          <p class="assignment-meta">{{ type_label }}{% if course_text != "" %} · {{ course_text }}{% endif %}</p>
+          {% if course_text != "" %}
+            <p class="assignment-meta">{{ course_text }}</p>
+          {% endif %}
           <p class="assignment-actions"><a href="{{ file_url }}" target="_blank" rel="noopener">Open file</a></p>
         </article>
       {% endif %}
