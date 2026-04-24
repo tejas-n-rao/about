@@ -5,75 +5,42 @@ permalink: /other/assignments/
 author_profile: false
 ---
 
-<p>Selected coursework submissions from my degree. Use the quick links to open files in a new tab, and expand previews where available.</p>
+<p>Selected coursework submissions from my degree. Card context is loaded from <code>_data/best_assignments.json</code> so you can update descriptions without changing this page.</p>
 
 {% assign assignment_files = site.static_files | where_exp: "file", "file.path contains '/_best_assignments/'" | sort: "name" %}
 
 {% if assignment_files.size > 0 %}
-  <h2>Documents and Slides</h2>
-  <div class="assignment-grid">
+  <h2>Assignments</h2>
+  <p class="assignment-hint">The order below is randomized on each page load.</p>
+  <div class="assignment-grid" id="assignment-grid">
     {% for file in assignment_files %}
       {% assign ext = file.extname | downcase %}
-      {% if ext == '.pdf' or ext == '.ppt' or ext == '.pptx' or ext == '.doc' or ext == '.docx' %}
+      {% if ext == '.pdf' or ext == '.ppt' or ext == '.pptx' or ext == '.doc' or ext == '.docx' or ext == '.mp4' or ext == '.mov' or ext == '.webm' or ext == '.m4v' %}
+        {% assign file_info = site.data.best_assignments.items[file.name] %}
         {% assign encoded_name = file.name | uri_escape %}
         {% assign file_url = '/_best_assignments/' | append: encoded_name | relative_url %}
-        <article class="assignment-card">
-          <h3>{{ file.basename | replace: '_', ' ' | replace: '-', ' ' }}</h3>
-          <p class="assignment-meta">{{ ext | remove: '.' | upcase }}</p>
-          <p class="assignment-actions"><a href="{{ file_url }}" target="_blank" rel="noopener">Open file</a></p>
-
-          {% if ext == '.pdf' %}
-            <details>
-              <summary>Preview PDF</summary>
-              <object data="{{ file_url }}#view=FitH" type="application/pdf" width="100%" height="560">
-                <p>Preview is unavailable in this browser. <a href="{{ file_url }}" target="_blank" rel="noopener">Open the PDF</a>.</p>
-              </object>
-            </details>
+        {% assign display_title = file.basename | replace: '_', ' ' | replace: '-', ' ' %}
+        {% assign context_text = "Context not added yet. Update _data/best_assignments.json to describe this assignment." %}
+        {% assign course_text = "" %}
+        {% if file_info %}
+          {% if file_info.title %}
+            {% assign display_title = file_info.title %}
           {% endif %}
-        </article>
-      {% endif %}
-    {% endfor %}
-  </div>
-
-  <h2>Videos</h2>
-  <div class="assignment-grid">
-    {% for file in assignment_files %}
-      {% assign ext = file.extname | downcase %}
-      {% if ext == '.mp4' or ext == '.mov' or ext == '.webm' or ext == '.m4v' %}
-        {% assign encoded_name = file.name | uri_escape %}
-        {% assign file_url = '/_best_assignments/' | append: encoded_name | relative_url %}
-        {% assign video_mime = 'video/mp4' %}
-        {% if ext == '.mov' %}
-          {% assign video_mime = 'video/quicktime' %}
-        {% elsif ext == '.webm' %}
-          {% assign video_mime = 'video/webm' %}
+          {% if file_info.context %}
+            {% assign context_text = file_info.context %}
+          {% endif %}
+          {% if file_info.course %}
+            {% assign course_text = file_info.course %}
+          {% endif %}
         {% endif %}
+        {% assign type_label = ext | remove: '.' | upcase %}
         <article class="assignment-card">
-          <h3>{{ file.basename | replace: '_', ' ' | replace: '-', ' ' }}</h3>
-          <p class="assignment-meta">{{ ext | remove: '.' | upcase }}</p>
-          <video controls preload="metadata" width="100%">
-            <source src="{{ file_url }}" type="{{ video_mime }}">
-            Your browser does not support inline video playback.
-          </video>
-          <p class="assignment-actions"><a href="{{ file_url }}" target="_blank" rel="noopener">Open video</a></p>
-        </article>
-      {% endif %}
-    {% endfor %}
-  </div>
-
-  <h2>Other Files</h2>
-  <div class="assignment-grid">
-    {% for file in assignment_files %}
-      {% assign ext = file.extname | downcase %}
-      {% unless ext == '.pdf' or ext == '.ppt' or ext == '.pptx' or ext == '.doc' or ext == '.docx' or ext == '.mp4' or ext == '.mov' or ext == '.webm' or ext == '.m4v' %}
-        {% assign encoded_name = file.name | uri_escape %}
-        {% assign file_url = '/_best_assignments/' | append: encoded_name | relative_url %}
-        <article class="assignment-card">
-          <h3>{{ file.basename | replace: '_', ' ' | replace: '-', ' ' }}</h3>
-          <p class="assignment-meta">{{ ext | remove: '.' | upcase }}</p>
+          <h3>{{ display_title }}</h3>
+          <p class="assignment-meta">{{ type_label }}{% if course_text != "" %} · {{ course_text }}{% endif %}</p>
+          <p class="assignment-context">{{ context_text }}</p>
           <p class="assignment-actions"><a href="{{ file_url }}" target="_blank" rel="noopener">Open file</a></p>
         </article>
-      {% endunless %}
+      {% endif %}
     {% endfor %}
   </div>
 {% else %}
@@ -88,6 +55,12 @@ author_profile: false
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1rem;
     margin: 0.8rem 0 1.8rem;
+  }
+
+  .assignment-hint {
+    margin: -0.35rem 0 0.85rem;
+    font-size: 0.92rem;
+    opacity: 0.8;
   }
 
   .assignment-card {
@@ -116,23 +89,25 @@ author_profile: false
     margin: 0.2rem 0 0;
   }
 
-  .assignment-card summary {
-    cursor: pointer;
-    margin-top: 0.65rem;
-    font-size: 0.92rem;
-  }
-
-  .assignment-card object {
-    border: 1px solid rgba(120, 120, 120, 0.28);
-    border-radius: 8px;
-    margin-top: 0.55rem;
-    background: #fff;
-  }
-
-  .assignment-card video {
-    display: block;
-    border-radius: 8px;
-    margin-top: 0.35rem;
-    background: #000;
+  .assignment-context {
+    margin: 0 0 0.75rem;
+    line-height: 1.5;
   }
 </style>
+
+<script>
+  (function () {
+    const grid = document.getElementById("assignment-grid");
+    if (!grid) return;
+    const cards = Array.from(grid.children);
+    for (let i = cards.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = cards[i];
+      cards[i] = cards[j];
+      cards[j] = temp;
+    }
+    cards.forEach(function (card) {
+      grid.appendChild(card);
+    });
+  })();
+</script>
