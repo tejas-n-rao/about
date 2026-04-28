@@ -1,0 +1,115 @@
+---
+layout: single
+title: "Worldviews/Musings"
+permalink: /other/worldviews-musings/
+author_profile: false
+entries:
+  - title: Premises: Why we take things for granted
+    body: |-
+      Because of how we experience life, I’d say every generation inherits a *‘lifestyle premise’*, a baseline of what counts as normal.
+      Electricity was once awe. Now it’s an outage complaint. 
+      Thus, progress feels like progress only to the generation that *witnesses* the rise of that baseline (i.e., remembers the absence of the progress). 
+      Latter generations have these experiences as a prior, and take the previous progress for granted. 
+      I don’t also want limit this concept to an discretised (intergenerational) purview, and think it applies to continuous temporal scales as well. This can be best summarised by a quote from the mother of Meursault (in The Stranger by Albert Camus): *one gets used to anything, eventually.* And I think this is not unidirectional: Humans can adapt to both abundance and deprivation. 
+      I personally I’m a firm believer that one can get used to most situations, but again I’m not staunch, and I’m aware this does breakdown if we apply it to extreme situations (for example, long-term exposure to war). 
+      The theme of *institutionalization* in *The Shawshank Redemption*, where Brooks commits suicide, may seem at odds with this, but I think they can be reconciled. I don’t deny that a sudden shift in environment can discomfit someone, but following this schema, claiming one is beyond adaptation or cannot be helped, feels overstated.
+    
+      I think this concept helps explain a few things. For example, the surprise at the sheer scale and recency of progress over time (e.g., women couldn’t vote just ~100 years ago, which feels distant only because our baseline has shifted so completely). 
+      Similarly, it shines some light on the idea that “money doesn’t buy happiness”: it does, to a point, since happiness tracks changes in condition (*delta*) more than steady-state abundance (*absolute*). 
+      The most unique implication I could draw, is an explaination for why empathy doesn’t scale well, especially to higher echelons of society. Doing so requires reconstructing *prior baselines,* which is a cognitively demanding task most people don’t even realize they’re failing at; many well-meaning people don’t lack compassion, but lack (lived) *reference points*.
+  - title: Privilege as Network Topology
+    body: |-
+      This idea sprung from a series of excellent explainers videos created by the youtube channel Veritasium.
+      
+      Privilege is often framed as possession (wealth, status), but through network theory, we can frame it to be *position*. 
+      In network theory, nodes differ not just by what they have, but also by *where they sit*.  
+      ‘Hubs’ are defined as nodes with a disproportionate number of connections. They have shown to posses increased ‘power’, such as access to information. 
+      Shortcuts are edges or pathways that significantly reduce the distance between otherwise distant nodes or clusters, enabling faster access to information, resources, or opportunities across the network. Privilege, therefore can be construed as *the “unearned” proximity to hubs within an aptly defined ‘social’ network.* 
+      
+      Combined with another consequence of network theory, we can see a huge impact of privilege. 
+      As shown in a paper titled ‘The Strength of Weak Ties’, weak ties (acquaintances) function as bridges between otherwise disconnected clusters, granting access to non-redundant information. 
+      Strong ties (friends, family) tend to be densely interconnected, meaning they circulate largely overlapping knowledge; weak ties, by contrast, link you to entirely different informational neighborhoods. 
+      In small-world networks, where even a few shortcuts collapse distances between far-flung nodes, these weak ties become disproportionately valuable as they facillitate access to distant hubs you would otherwise never access. 
+      This is where proximity to hubs translates directly into privilege. If you are positioned near a hub, you are likely to be closer to these shortcuts, meaning you are fewer steps away from high-value information, decision-makers, and opportunities. 
+      In other words, the network “distance” you must traverse is smaller. In many real systems, outcomes scale non-linearly with this distance, meaning as distance from hubs increases, access to opportunities, especially those mediated by shortcuts and bridging ties, drops off sharply rather than gradually. 
+      
+      This framework effectively explains why two individuals with equal ability but different network positions will experience radically different outcomes.
+      As a side note, it also explains why “networking” (see what I did there?) works: it effectively creates new weak ties and shortcuts, reducing your distance to valuable nodes. This increases your surface area for opportunity and, in a sense, manufactures luck.
+
+---
+---
+
+<p class="musings-intro">These are some short ideas I've articulated. I'm no expert philosopher, so there are a gaps in some arguments. I'd be happy to hear from anyone who has opinions or finds holes in the narratives presented, and would be greatful if you could challenge my worldview. Also, I hope that these ideas are original, but what are we if not a synthesis and/or mosaic of the worldviews we've been exposed to?</p>
+
+<section class="musings-panes" aria-label="Worldviews and musings entries">
+  {% for entry in page.entries %}
+    <details class="musing-pane">
+      <summary>{{ entry.title }}</summary>
+      <div class="musing-pane__body">
+        {{ entry.body | markdownify }}
+      </div>
+    </details>
+  {% endfor %}
+</section>
+
+<style>
+  .musings-intro {
+    margin: 0 0 1.1rem;
+    color: var(--global-text-color);
+    line-height: 1.5;
+  }
+
+  .musings-panes {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .musing-pane {
+    border: 1px solid rgba(120, 120, 120, 0.3);
+    border-radius: 12px;
+    background: rgba(140, 140, 140, 0.05);
+    overflow: hidden;
+  }
+
+  .musing-pane summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: 1.05rem;
+    font-weight: 650;
+    padding: 0.8rem 1rem;
+    position: relative;
+    padding-right: 2.25rem;
+  }
+
+  .musing-pane summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .musing-pane summary::after {
+    content: "+";
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    opacity: 0.8;
+  }
+
+  .musing-pane[open] summary::after {
+    content: "-";
+  }
+
+  .musing-pane__body {
+    border-top: 1px solid rgba(120, 120, 120, 0.2);
+    padding: 0.85rem 1rem 1rem;
+    line-height: 1.7;
+  }
+
+  .musing-pane__body p {
+    margin: 0 0 0.8rem;
+  }
+
+  .musing-pane__body p:last-child {
+    margin-bottom: 0;
+  }
+</style>
